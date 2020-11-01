@@ -10,21 +10,24 @@
       <el-container>
         <el-aside width="200px">
           <el-menu
-            default-active="2"
-            class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
+
             background-color="#333744"
             text-color="#fff"
-            active-text-color="#ffd04b">
-            <el-submenu index="1">
+            active-text-color="#489EFF"
+            unique-opened>
+            <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
               <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>导航一</span>
+                <i :class="iconObj[item.id]"></i>
+                <span>{{item.authName}}</span>
               </template>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
-                <el-menu-item index="1-3">选项3</el-menu-item>
+
+                <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
+                <template slot="title">
+
+                  <i class="el-icon-location"></i>
+                  <span>{{subItem.authName}}</span>
+                </template>
+                </el-menu-item>
             </el-submenu>
 
           </el-menu>
@@ -38,14 +41,30 @@
   export default {
     data () {
       return {
-
+        menuList:[],
+        iconObj: {
+          '125': 'iconfont icon-user',
+          '103': 'iconfont icon-tijikongjian',
+          '101': 'iconfont icon-shangpin',
+          '102': 'iconfont icon-danju',
+          '145': 'iconfont icon-baobiao'
+        },
       }
+    },
+    created () {
+      this.getMenuList();
     },
     methods: {
       logout(){
         // 清空token
         window.sessionStorage.clear()
         this.$router.push('/login')
+      },
+      async getMenuList (){
+        const {data:res}   =await this.$http.get('menus')
+        if(res.meta.status!==200)return this.$message.error(res.meta.msg)
+        this.menuList=res.data;
+        console.log(res)
       }
     }
   }
@@ -78,9 +97,15 @@
   }
   .el-aside{
     background-color:#333744;
+    .el-menu {
+      border: none;
+    }
   }
   .el-main{
     background-color: #eaedf1;
+  }
+  .iconfont{
+    margin-right: 10px;
   }
 
 </style>
