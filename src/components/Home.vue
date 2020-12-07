@@ -8,13 +8,15 @@
         <el-button type="info" @click="logout">退出</el-button>
       </el-header>
       <el-container>
-        <el-aside width="200px">
+        <el-aside :width="isCollapse ? '64px':'200px'">
+          <div class="toggle-button" @click="toggleCollapse">|||</div>
           <el-menu
 
             background-color="#333744"
             text-color="#fff"
             active-text-color="#489EFF"
-            unique-opened>
+            unique-opened :collapse="isCollapse"
+          :collapse-transition="false">
             <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
               <template slot="title">
                 <i :class="iconObj[item.id]"></i>
@@ -49,6 +51,7 @@
           '102': 'iconfont icon-danju',
           '145': 'iconfont icon-baobiao'
         },
+        isCollapse:false
       }
     },
     created () {
@@ -65,6 +68,9 @@
         if(res.meta.status!==200)return this.$message.error(res.meta.msg)
         this.menuList=res.data;
         console.log(res)
+      },
+      toggleCollapse(){
+        this.isCollapse=!this.isCollapse;
       }
     }
   }
@@ -106,6 +112,15 @@
   }
   .iconfont{
     margin-right: 10px;
+  }
+  .toggle-button{
+    background-color: #42b983;
+    font-size: 10px;
+    line-height: 24px;
+    color: #cccccc;
+    text-align: center;
+    letter-spacing: 0.2em;
+    cursor: pointer;
   }
 
 </style>
