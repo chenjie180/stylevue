@@ -16,14 +16,15 @@
             text-color="#fff"
             active-text-color="#489EFF"
             unique-opened :collapse="isCollapse"
-          :collapse-transition="false">
+          :collapse-transition="false" router :default-active="activePath">
             <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
               <template slot="title">
                 <i :class="iconObj[item.id]"></i>
                 <span>{{item.authName}}</span>
               </template>
 
-                <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
+                <el-menu-item :index="'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id"
+                @click="saveNavState('/'+subItem.path)">
                 <template slot="title">
 
                   <i class="el-icon-location"></i>
@@ -34,7 +35,9 @@
 
           </el-menu>
         </el-aside>
-        <el-main>Main</el-main>
+        <el-main>
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
 </template>
@@ -51,11 +54,13 @@
           '102': 'iconfont icon-danju',
           '145': 'iconfont icon-baobiao'
         },
-        isCollapse:false
+        isCollapse:false,
+        activePath:''
       }
     },
     created () {
       this.getMenuList();
+      this.activePath= window.sessionStorage.getItem('activePath');
     },
     methods: {
       logout(){
@@ -72,7 +77,13 @@
       toggleCollapse(){
         this.isCollapse=!this.isCollapse;
       }
-    }
+      ,//保存连接的激活状态
+      saveNavState(activePath){
+        window.sessionStorage.setItem('activePath',activePath);
+        this.activePath=activePath
+      }
+    },
+
   }
 </script>
 
